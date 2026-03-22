@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Index Page</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="navbar"></div>
+    <div class="container">
+      <div class="card">
+        <div class="txtbox">TEXT</div>
+        <form action="/.." method="post" enctype="multipart/form-data">
+          <input
+            type="file"
+            class="inputbox"
+            name="file"
+            accept=".csv"
+            placeholder="Upload cvs file here"
+          />
+          <div>or</div>
+          <input type="text" class="inputbox" placeholder="Paste text here" />
+          <button class="btn" type="submit">Generate Analysis</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

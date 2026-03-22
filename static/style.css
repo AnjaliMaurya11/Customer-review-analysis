@@ -1,0 +1,70 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  /*background-color: #e6dfc8;  light background 
+    background: linear-gradient(to right, #f2fcfe, #1c92d2); */
+  background-image: url("bg4.jpg");
+
+  background-size: cover;
+  background-position: center;
+}
+
+/* Top brown bar */
+.navbar {
+  height: 50px;
+  background-color: #c89563;
+  border-radius: 0px 0px 30px 30px;
+}
+
+/* Center container */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 70px);
+}
+
+/* Green card */
+.card {
+  background-color: floralwhite;
+  padding: 60px 40px;
+  border-radius: 20px;
+  width: 60%;
+  max-width: 700px;
+  text-align: center;
+  transition: all 0.3s ease;
+  opacity: 90%;
+}
+
+/* Hover effect */
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  opacity: 100%;
+}
+/* Small top box */
+.txtbox {
+  background-color: #e8d9b5;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+}
+
+/* Input field */
+.inputbox {
+  width: 80%;
+  padding: 15px;
+  border-radius: 12px;
+  border: none;
+  background-color: #e8d9b5;
+  margin-bottom: 40px;
+}
+
+/* Button */
+.btn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 12px;
+  background-color: #e8d9b5;
+  cursor: pointer;
+}
