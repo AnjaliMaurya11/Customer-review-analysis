@@ -1,0 +1,15 @@
+<form action="/predict" method="post">
+    <button type="submit">Run Preprocessing</button>
+</form>
+
+{% if prediction %}
+<p>{{ prediction }}</p>
+{% endif %}
+
+{% if reviews %}
+<ul>
+    {% for review in reviews %}
+    <li>{{ review }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
