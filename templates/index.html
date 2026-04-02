@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 <html lang="en">
   <head>
@@ -32,3 +33,20 @@
     </div>
   </body>
 </html>
+=======
+<form action="/predict" method="post">
+    <button type="submit">Run Preprocessing</button>
+</form>
+
+{% if prediction %}
+<p>{{ prediction }}</p>
+{% endif %}
+
+{% if reviews %}
+<ul>
+    {% for review in reviews %}
+    <li>{{ review }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+>>>>>>> e703c65d1ab95a7a01714ca79c2991dc70c1975b
