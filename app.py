@@ -1,8 +1,13 @@
-from flask import Flask, render_template
-import os
+# from flask import Flask, render_template
+# import os
 
-from app.preprocessing import preprocess_data
+# from app.preprocessing import preprocess_data
+from flask import Flask, render_template, request
+import pandas as pd
 
+from app.sentiment import analyze_sentiment
+
+from app.keywordExtract import extract_keywords
 
 app = Flask(__name__)
 
@@ -14,38 +19,44 @@ def home():
     return render_template(TEMPLATE_FILE)
 
 
-@app.route("/predict", methods=["POST"])
-def predict():
 
-    try:
-        file_path = os.path.join(
-            "app",
-            "dataset",
-            "Womens Clothing E-Commerce Reviews.csv"
-        )
+from app.preprocessing import preprocess_csv, preprocess_manual
 
-        df = preprocess_data(file_path)
+@app.route('/predict', methods=['POST'])
+def result():
+    sentiment = None
+    keywords = None
+    summary = None
 
-        if df is None:
-            return render_template(
-                TEMPLATE_FILE,
-                prediction="❌ Preprocessing failed"
-            )
+    reviews = []
 
-        sample_output = df["Cleaned Review"].head(5).tolist()
+    file = request.files.get('file')
 
-        return render_template(
-            TEMPLATE_FILE,
-            prediction="✅ Data cleaned successfully",
-            reviews=sample_output
-        )
+    # 🔹 CSV Input
+    if file and file.filename != "":
+        df = preprocess_csv(file)
+        reviews = df["cleaned_review"].tolist()
 
-    except Exception as e:
-        return render_template(
-            TEMPLATE_FILE,
-            prediction=f"Error: {str(e)}"
-        )
+    # 🔹 Manual Input
+    else:
+        manual_text = request.form.get('manual_reviews')
 
+        if manual_text:
+            reviews = preprocess_manual(manual_text)
+
+    # 🔹 Safety check
+    if not reviews:
+        return "No reviews provided!"
+
+    # 🔹 Pass cleaned reviews
+    sentiment, _ = analyze_sentiment(reviews)
+    keywords = extract_keywords(reviews)
+    # summary = summarize_text(reviews)
+
+    return render_template('result.html',
+                           sentiment=sentiment,
+                           keywords=keywords
+                        )
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,39 +1,38 @@
-import pandas as pd
+
+
 from collections import Counter
 
+from collections import Counter
 
-def extract_keywords(top_n=10):
-    input_path = "app/dataset/cleaned_reviews.csv"
+def extract_keywords(reviews, top_n=10, min_freq=3):
+    """
+    Extract keywords that appear at least min_freq times.
 
-    # Load cleaned dataset
-    df = pd.read_csv(input_path)
+    reviews: list of cleaned review strings
+    top_n: max number of keywords to return
+    min_freq: minimum frequency threshold
+    """
 
-    # Safety check
-    if 'cleaned_review' not in df.columns:
-        raise Exception("Missing 'cleaned_review' column. Run preprocessing first.")
+    if not reviews:
+        return []
 
-    # Combine all cleaned reviews into one string
-    text = " ".join(df['cleaned_review'].dropna())
+    # Combine all reviews
+    text = " ".join(reviews)
 
     # Split into words
     words = text.split()
 
-    # Remove very short words (optional but improves quality)
+    # Remove short words
     words = [word for word in words if len(word) > 2]
 
-    # Count word frequency
+    # Count frequency
     word_counts = Counter(words)
 
-    # Get top N keywords
-    top_keywords = word_counts.most_common(top_n)
+    # 🔹 Filter words with frequency >= min_freq
+    filtered_words = [(word, count) for word, count in word_counts.items() if count >= min_freq]
 
-    return top_keywords
+    # 🔹 Sort by frequency (descending)
+    filtered_words = sorted(filtered_words, key=lambda x: x[1], reverse=True)
 
-
-# 🔹 Run independently (for testing)
-if __name__ == "__main__":
-    keywords = extract_keywords(10)
-
-    print("Top Keywords:\n")
-    for word, count in keywords:
-        print(f"{word} : {count}")
+    # 🔹 Return top N
+    return filtered_words[:top_n]

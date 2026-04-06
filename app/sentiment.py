@@ -1,17 +1,10 @@
-from preprocessing import preprocess_data
+
+
 from textblob import TextBlob
 
-# File path
-file_path = "app/dataset/Womens Clothing E-Commerce Reviews.csv"
-
-# Get preprocessed data
-df = preprocess_data(file_path)
-
-# Function to get sentiment
 def get_sentiment(text):
-    analysis = TextBlob(text)
-    polarity = analysis.sentiment.polarity
-    
+    polarity = TextBlob(text).sentiment.polarity
+
     if polarity > 0:
         return "Positive"
     elif polarity < 0:
@@ -19,18 +12,29 @@ def get_sentiment(text):
     else:
         return "Neutral"
 
-# Apply sentiment analysis
-if df is not None:
-    
-    # Apply sentiment function
-    df["sentiment"] = df["cleaned_review"].apply(get_sentiment)
-    
-    # Count results
-    sentiment_counts = df["sentiment"].value_counts()
-    
-    print("\n=== SENTIMENT RESULTS ===\n")
-    print(df[["Review Text", "cleaned_review", "sentiment"]].head())
-    
-    print("\n=== SUMMARY ===\n")
-    print(sentiment_counts)
 
+def analyze_sentiment(reviews):
+    """
+    reviews: list of cleaned review strings
+    """
+
+    if not reviews:
+        return {}, []
+
+    sentiment_list = []
+
+    # 🔹 Get sentiment for each review
+    for review in reviews:
+        sentiment = get_sentiment(review)
+        sentiment_list.append(sentiment)
+
+    # 🔹 Count percentages
+    total = len(sentiment_list)
+
+    result = {
+        "Positive": round((sentiment_list.count("Positive") / total) * 100, 2),
+        "Negative": round((sentiment_list.count("Negative") / total) * 100, 2),
+        "Neutral": round((sentiment_list.count("Neutral") / total) * 100, 2)
+    }
+
+    return result, sentiment_list

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!doctype html>
 <html lang="en">
   <head>
@@ -20,10 +19,11 @@
         </div>
         <form action="/predict" method="post" enctype="multipart/form-data">
           <p>Upload csv file :</p>
-          <input type="file" class="inputbox" name="review" accept=".csv" />
+          <input type="file" class="inputbox" name="file" accept=".csv" />
           <p>OR</p>
           <p>Enter reviews manually:</p>
           <textarea
+            name="manual_reviews"
             class="inputbox"
             placeholder="Enter reviews here..."
           ></textarea>
@@ -33,20 +33,3 @@
     </div>
   </body>
 </html>
-=======
-<form action="/predict" method="post">
-    <button type="submit">Run Preprocessing</button>
-</form>
-
-{% if prediction %}
-<p>{{ prediction }}</p>
-{% endif %}
-
-{% if reviews %}
-<ul>
-    {% for review in reviews %}
-    <li>{{ review }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
->>>>>>> e703c65d1ab95a7a01714ca79c2991dc70c1975b

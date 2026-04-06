@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Analysis Result</title>
+
+    <!-- Optional: Simple styling -->
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background-color: #f5f7fa;
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: auto;
+      }
+
+      .card {
+        background: white;
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      li {
+        padding: 5px 0;
+      }
+
+      .btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 15px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+      }
+
+      .btn:hover {
+        background: #0056b3;
+      }
+
+      .highlight {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>📊 Analysis Result</h2>
+
+      <!-- Sentiment Section -->
+      <div class="card">
+        <h3>Sentiment Analysis</h3>
+        <p>
+          <span class="highlight">Positive:</span> {{ sentiment['Positive'] }}%
+        </p>
+        <p>
+          <span class="highlight">Negative:</span> {{ sentiment['Negative'] }}%
+        </p>
+        <p>
+          <span class="highlight">Neutral:</span> {{ sentiment['Neutral'] }}%
+        </p>
+      </div>
+
+      <!-- Keywords Section -->
+      <div class="card">
+        <h3>Top Keywords</h3>
+        <ul>
+          {% for word, count in keywords %}
+          <li><span class="highlight">{{ word }}</span> — {{ count }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Summary Section -->
+      <div class="card">
+        <h3>Summary</h3>
+        <p>{{ summary }}</p>
+      </div>
+
+      <!-- Back Button -->
+      <a href="/" class="btn">⬅ Analyze Another File</a>
+    </div>
+  </body>
+</html>
