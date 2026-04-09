@@ -1,38 +1,44 @@
 
 
+import os
+import pickle
+from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import Counter
 
-from collections import Counter
+# ✅ Load trained TF-IDF model safely
+current_dir = os.path.dirname(__file__)
+model_path = os.path.join(current_dir, "tfidf.pkl")
 
-def extract_keywords(reviews, top_n=10, min_freq=3):
-    """
-    Extract keywords that appear at least min_freq times.
+vectorizer = pickle.load(open(model_path, "rb"))
 
-    reviews: list of cleaned review strings
-    top_n: max number of keywords to return
-    min_freq: minimum frequency threshold
-    """
+# ⚠️ IMPORTANT: Upgrade vectorizer to support phrases (bigrams)
+vectorizer.max_features = 100     # optional: allows more keywords
 
-    if not reviews:
-        return []
 
-    # Combine all reviews
-    text = " ".join(reviews)
+def extract_keywords(text, top_n=10):
+    # 🔹 Transform text
+    tfidf_matrix = vectorizer.transform([text])
+    feature_names = vectorizer.get_feature_names_out()
+    scores = tfidf_matrix.toarray()[0]
 
-    # Split into words
-    words = text.split()
+    # 🔹 Get top scoring indices
+    top_indices = scores.argsort()[-top_n:][::-1]
 
-    # Remove short words
-    words = [word for word in words if len(word) > 2]
+    keywords = []
 
-    # Count frequency
-    word_counts = Counter(words)
+    for i in top_indices:
+        if scores[i] > 0.1:
+            keywords.append(feature_names[i])
 
-    # 🔹 Filter words with frequency >= min_freq
-    filtered_words = [(word, count) for word, count in word_counts.items() if count >= min_freq]
+    # 🚨 FALLBACK
+    if not keywords:
+        words = text.split()
+        keywords = words[:top_n]
 
-    # 🔹 Sort by frequency (descending)
-    filtered_words = sorted(filtered_words, key=lambda x: x[1], reverse=True)
+    # ✅ FIXED COUNTING (works for phrases too)
+    keyword_with_count = []
+    for word in keywords:
+        count = text.lower().count(word.lower())
+        keyword_with_count.append((word, count))
 
-    # 🔹 Return top N
-    return filtered_words[:top_n]
+    return keyword_with_count

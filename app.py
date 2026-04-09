@@ -42,8 +42,11 @@ def result():
 
     # 🔹 Pass cleaned reviews
     sentiment, _ = analyze_sentiment(reviews)
-    keywords = extract_keywords(reviews)
+
+    combined_text = " ".join(reviews)
+    keywords = extract_keywords(combined_text)
     # summary = generate_summary(reviews)
+    print("KEYWORDS:", keywords)
 
     return render_template('result.html',
                            sentiment=sentiment,

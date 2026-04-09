@@ -75,13 +75,19 @@
       </div>
 
       <!-- Keywords Section -->
-      <div class="card">
+       <div class="card">
         <h3>Top Keywords</h3>
+        {% if keywords %}
         <ul>
           {% for word, count in keywords %}
-          <li><span class="highlight">{{ word }}</span> — {{ count }}</li>
+          <li>
+            <span class="highlight">{{ word }}</span> — {{ count }}
+          </li>
           {% endfor %}
         </ul>
+        {% else %}
+        <p>No keywords found</p>
+        {% endif %}
       </div>
 
       <!-- Summary Section -->
