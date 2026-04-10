@@ -10,21 +10,18 @@ body {
 }
 /* navbar */
 .navbar {
-  background: linear-gradient(
-    135deg,
-    rgba(34, 197, 94, 0.25),
-    rgba(59, 130, 246, 0.25)
-  );
+  background-color: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(5px);
   padding: 8px;
   border-radius: 0px 0px 16px 16px;
-  height: 53px;
+  height: 50px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
 }
 
 /* Center container */
 .container {
-  margin-top: 25px;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,38 +36,36 @@ body {
   max-width: 650px;
   text-align: center;
   transition: all 0.3s ease;
-  background: linear-gradient(
-    135deg,
-    rgba(34, 197, 94, 0.25),
-    rgba(59, 130, 246, 0.25)
-  );
+  background-color: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(5px);
 }
 
 /* Hover effect */
 .card:hover {
-  background: linear-gradient(
+  /* background: linear-gradient(
     135deg,
-    rgba(34, 197, 94, 0.5),
+    rgba(34, 107, 197, 0.5),
     rgba(59, 130, 246, 0.5)
-  );
+  ); */
+  border: 2px solid #07123d;
 }
 /* Small top box */
 .txtbox {
-  color: white;
+  color: #07123d;
   padding: 5px;
 
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 /* Input field */
 .inputbox {
-  width: 80%;
+  width: 75%;
   padding: 15px;
   border-radius: 12px;
-  border: none;
+  margin-bottom: 10px;
   background-color: white;
   margin-bottom: 20px;
+  border: 2px solid #07123d;
 }
 
 /* Button */
@@ -78,8 +73,8 @@ body {
   border-radius: 12px;
 
   cursor: pointer;
-  border: 2px solid #034a8f;
-  color: #034a8f;
+  border: 2px solid #07123d;
+  color: #07123d;
   background: white;
   font-size: 20px;
   font-weight: 600;
@@ -93,11 +88,26 @@ body {
 }
 
 .btn:hover {
-  background: #034a8f;
+  background: #07123d;
   color: #fff;
 }
 
 p {
-  color: white;
+  color: #07123d;
   font-size: 22px;
+  margin: 10px;
+}
+
+.navDiv {
+  margin-left: 20px;
+  font-size: 22px;
+  font-weight: 600;
+  background-color: #07123d;
+  padding: 10px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+}
+.logo {
+  color: white;
 }
