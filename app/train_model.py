@@ -68,7 +68,14 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # 🔹 Train model
-model = LogisticRegression(max_iter=200)
+model = LogisticRegression(
+    max_iter=200,
+    class_weight={
+        "Positive": 1,
+        "Negative": 1,
+        "Neutral": 2
+    }
+)
 model.fit(X_train, y_train)
 
 # 🔹 Evaluate
