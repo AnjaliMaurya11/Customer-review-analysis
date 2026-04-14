@@ -3,7 +3,6 @@
   <head>
     <title>Analysis Result</title>
 
-    <!-- Optional: Simple styling -->
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -35,6 +34,7 @@
 
       li {
         padding: 5px 0;
+        font-size: 16px;
       }
 
       .btn {
@@ -54,39 +54,41 @@
       .highlight {
         font-weight: bold;
       }
+
+      .count {
+        color: #555;
+      }
     </style>
   </head>
+
   <body>
     <div class="container">
+
       <h2>📊 Analysis Result</h2>
 
       <!-- Sentiment Section -->
       <div class="card">
         <h3>Sentiment Analysis</h3>
-        <p>
-          <span class="highlight">Positive:</span> {{ sentiment['Positive'] }}%
-        </p>
-        <p>
-          <span class="highlight">Negative:</span> {{ sentiment['Negative'] }}%
-        </p>
-        <p>
-          <span class="highlight">Neutral:</span> {{ sentiment['Neutral'] }}%
-        </p>
+        <p><span class="highlight">Positive:</span> {{ sentiment['Positive'] }}%</p>
+        <p><span class="highlight">Negative:</span> {{ sentiment['Negative'] }}%</p>
+        <p><span class="highlight">Neutral:</span> {{ sentiment['Neutral'] }}%</p>
       </div>
 
       <!-- Keywords Section -->
-       <div class="card">
+      <div class="card">
         <h3>Top Keywords</h3>
+
         {% if keywords %}
         <ul>
           {% for word, count in keywords %}
-          <li>
-            <span class="highlight">{{ word }}</span> — {{ count }}
-          </li>
+            <li>
+              <span class="highlight">{{ word }}</span>
+              <span class="count">= {{ count }}</span>
+            </li>
           {% endfor %}
         </ul>
         {% else %}
-        <p>No keywords found</p>
+          <p>No keywords found</p>
         {% endif %}
       </div>
 
@@ -98,7 +100,7 @@
 
       <!-- Back Button -->
       <a href="/" class="btn">⬅ Analyze Another File</a>
+
     </div>
   </body>
 </html>
-<!--change-->

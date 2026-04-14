@@ -1,44 +1,43 @@
-#changes
-
-import os
 import pickle
-from sklearn.feature_extraction.text import TfidfVectorizer
-from collections import Counter
+import numpy as np
 
-# ✅ Load trained TF-IDF model safely
-current_dir = os.path.dirname(__file__)
-model_path = os.path.join(current_dir, "tfidf.pkl")
+vectorizer = pickle.load(open("app/tfidf.pkl", "rb"))
 
-vectorizer = pickle.load(open(model_path, "rb"))
+def extract_keywords(text_input, top_n=10):
 
-# ⚠️ IMPORTANT: Upgrade vectorizer to support phrases (bigrams)
-vectorizer.max_features = 100     # optional: allows more keywords
+    if not text_input or not text_input.strip():
+        return []
 
+    text_input = text_input.lower().strip()
 
-def extract_keywords(text, top_n=10):
-    # 🔹 Transform text
-    tfidf_matrix = vectorizer.transform([text])
+    tfidf_matrix = vectorizer.transform([text_input])
+
     feature_names = vectorizer.get_feature_names_out()
     scores = tfidf_matrix.toarray()[0]
 
-    # 🔹 Get top scoring indices
-    top_indices = scores.argsort()[-top_n:][::-1]
+    indices = np.where(scores > 0)[0]
 
-    keywords = []
+    ranked = sorted(indices, key=lambda i: scores[i], reverse=True)
 
-    for i in top_indices:
-        if scores[i] > 0.1:
-            keywords.append(feature_names[i])
+    results = []
 
-    # 🚨 FALLBACK
-    if not keywords:
-        words = text.split()
-        keywords = words[:top_n]
+    for i in ranked:
+        phrase = feature_names[i]
 
-    # ✅ FIXED COUNTING (works for phrases too)
-    keyword_with_count = []
-    for word in keywords:
-        count = text.lower().count(word.lower())
-        keyword_with_count.append((word, count))
+        # only bigrams/trigrams
+        if len(phrase.split()) < 2:
+            continue
 
-    return keyword_with_count
+        # real occurrence count in text
+        count = text_input.count(phrase)
+
+        # skip if somehow not present
+        if count == 0:
+            continue
+
+        results.append((phrase, count))
+
+        if len(results) >= top_n:
+            break
+
+    return results
