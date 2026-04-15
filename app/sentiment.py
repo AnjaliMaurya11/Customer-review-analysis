@@ -1,39 +1,81 @@
-#change
-from textblob import TextBlob
+import pickle
+import re
+import string
 
-def get_sentiment(text):
-    polarity = TextBlob(text).sentiment.polarity
+# =========================
+# 🔹 LOAD MODEL & VECTORIZER
+# =========================
+model = pickle.load(open("app/sentiment_model.pkl", "rb"))
+vectorizer = pickle.load(open("app/tfidf_sentiment.pkl", "rb"))
 
-    if polarity > 0:
+# =========================
+# 🔹 TEXT CLEANING
+# =========================
+def clean_text(text):
+    text = text.lower()
+    text = re.sub(f"[{string.punctuation}]", "", text)
+    return text
+
+# =========================
+# 🔹 RATING → SENTIMENT
+# =========================
+def rating_to_sentiment(rating):
+       if rating >= 4:
         return "Positive"
-    elif polarity < 0:
+       elif rating <= 2:
         return "Negative"
-    else:
+       else:
         return "Neutral"
 
+# =========================
+# 🔹 ML PREDICTION
+# =========================
+def predict_single(review):
+    review = clean_text(review)
+    vec = vectorizer.transform([review])
+    return model.predict(vec)[0]
 
-def analyze_sentiment(reviews):
+# =========================
+# 🔥 MAIN FUNCTION (ONLY DISTRIBUTION)
+# =========================
+def analyze_sentiment(reviews, ratings=None):
     """
-    reviews: list of cleaned review strings
+    reviews: list of cleaned reviews
+    ratings: optional list of ratings
+    returns: sentiment percentage distribution only
     """
 
-    if not reviews:
-        return {}, []
+    sentiments = []
 
-    sentiment_list = []
+    for i, review in enumerate(reviews):
 
-    # 🔹 Get sentiment for each review
-    for review in reviews:
-        sentiment = get_sentiment(review)
-        sentiment_list.append(sentiment)
+        rating = None
 
-    # 🔹 Count percentages
-    total = len(sentiment_list)
+        # Use rating if available
+        if ratings and i < len(ratings):
+            rating = ratings[i]
 
-    result = {
-        "Positive": round((sentiment_list.count("Positive") / total) * 100, 2),
-        "Negative": round((sentiment_list.count("Negative") / total) * 100, 2),
-        "Neutral": round((sentiment_list.count("Neutral") / total) * 100, 2)
+        if rating:
+            try:
+                sentiment = rating_to_sentiment(int(rating))
+            except:
+                sentiment = predict_single(review)
+        else:
+            sentiment = predict_single(review)
+
+        sentiments.append(sentiment)
+
+    if not sentiments:
+        return {}
+
+    total = len(sentiments)
+
+    pos = sentiments.count("Positive")
+    neg = sentiments.count("Negative")
+    neu = sentiments.count("Neutral")
+
+    return {
+        "Positive %": round((pos / total) * 100, 2),
+        "Negative %": round((neg / total) * 100, 2),
+        "Neutral %": round((neu / total) * 100, 2)
     }
-
-    return result, sentiment_list

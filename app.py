@@ -18,30 +18,37 @@ def home():
 @app.route('/predict', methods=['POST'])
 def result():
 
-    sentiment = None
+    sentiment_details = None
     keywords = None
     summary = None
 
     cleaned_reviews = []
     original_reviews = []
+    ratings = None
 
     file = request.files.get('file')
 
     # 🔹 CSV INPUT
+   
     if file and file.filename != "":
 
         df = preprocess_csv(file)
 
-        # cleaned text → sentiment
-        cleaned_reviews = df["cleaned_review"].dropna().astype(str).tolist()
+        # Keep alignment
+        df = df.dropna(subset=["cleaned_review"])
 
-        # original text → keywords + summary
+        cleaned_reviews = df["cleaned_review"].astype(str).tolist()
+
+        # Extract ratings if available
+        if "Rating" in df.columns:
+            ratings = df["Rating"].tolist()
+
         if "Review Text" in df.columns:
             original_reviews = df["Review Text"].dropna().astype(str).tolist()
         else:
             original_reviews = cleaned_reviews
 
-    # 🔹 MANUAL INPUT
+
     else:
         manual_text = request.form.get('manual_reviews')
 
@@ -49,12 +56,12 @@ def result():
             original_reviews = [manual_text]
             cleaned_reviews = preprocess_manual(manual_text)
 
-    # 🔹 SAFETY CHECK
+    
     if not cleaned_reviews:
         return "No reviews provided!"
 
-    # 🔹 SENTIMENT → cleaned text
-    sentiment, _ = analyze_sentiment(cleaned_reviews)
+   
+    sentiment_details = analyze_sentiment(cleaned_reviews, ratings)
 
     # 🔹 KEYWORDS → run RAKE per-review (works for CSV + manual input)
     keywords = extract_keywords(original_reviews)
@@ -68,7 +75,7 @@ def result():
     # 🔹 RETURN
     return render_template(
         'result.html',
-        sentiment=sentiment,
+        sentiment_details=sentiment_details,
         keywords=keywords,
         summary=summary
     )

@@ -63,15 +63,20 @@
 
   <body>
     <div class="container">
-
       <h2>📊 Analysis Result</h2>
 
       <!-- Sentiment Section -->
       <div class="card">
         <h3>Sentiment Analysis</h3>
-        <p><span class="highlight">Positive:</span> {{ sentiment['Positive'] }}%</p>
-        <p><span class="highlight">Negative:</span> {{ sentiment['Negative'] }}%</p>
-        <p><span class="highlight">Neutral:</span> {{ sentiment['Neutral'] }}%</p>
+        <p>
+          <span class="highlight">Positive:</span> {{
+          sentiment_details['Positive %'] }}%
+        </p>
+
+        <p>
+          <span class="highlight">Negative:</span> {{
+          sentiment_details['Negative %'] }}%
+        </p>
       </div>
 
       <!-- Keywords Section -->
@@ -81,14 +86,14 @@
         {% if keywords %}
         <ul>
           {% for word, count in keywords %}
-            <li>
-              <span class="highlight">{{ word }}</span>
-              <span class="count">= {{ count }}</span>
-            </li>
+          <li>
+            <span class="highlight">{{ word }}</span>
+            <span class="count">= {{ count }}</span>
+          </li>
           {% endfor %}
         </ul>
         {% else %}
-          <p>No keywords found</p>
+        <p>No keywords found</p>
         {% endif %}
       </div>
 
@@ -100,7 +105,6 @@
 
       <!-- Back Button -->
       <a href="/" class="btn">⬅ Analyze Another File</a>
-
     </div>
   </body>
 </html>

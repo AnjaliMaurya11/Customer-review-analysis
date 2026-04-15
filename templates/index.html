@@ -1,14 +1,30 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Index Page</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='favicon.png') }}"
+    />
+    <title>Customer Review Analyzer</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
   </head>
   <body>
-    <div class="navbar"><div class="navDiv"><p class="logo">Customer Review Analyzer</p></div></div>
+    <div class="navbar">
+      <div class="navDiv">
+        <div style="background-color: white">
+          <i class="fa-solid fa-magnifying-glass-chart fa-lg"></i>
+        </div>
+        <p class="logo">Customer Review Analyzer</p>
+      </div>
+    </div>
     <div class="container">
       <div class="card">
         <div class="txtbox">
@@ -19,6 +35,7 @@
         </div>
         <form action="/predict" method="post" enctype="multipart/form-data">
           <p>Upload csv file :</p>
+
           <input type="file" class="inputbox" name="file" accept=".csv" />
           <p>OR</p>
           <p>Enter reviews manually:</p>
