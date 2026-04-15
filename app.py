@@ -56,11 +56,8 @@ def result():
     # 🔹 SENTIMENT → cleaned text
     sentiment, _ = analyze_sentiment(cleaned_reviews)
 
-    # 🔥 IMPORTANT FIX (for your keywords)
-    combined_text = " ".join(original_reviews)
-
-    # 🔹 KEYWORDS → combined text
-    keywords = extract_keywords(combined_text)
+    # 🔹 KEYWORDS → run RAKE per-review (works for CSV + manual input)
+    keywords = extract_keywords(original_reviews)
 
     # 🔹 SUMMARY → list (correct for her function)
     summary = generate_summary(original_reviews)

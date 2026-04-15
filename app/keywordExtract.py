@@ -1,43 +1,22 @@
-import pickle
-import numpy as np
+import spacy
+from collections import Counter
 
-vectorizer = pickle.load(open("app/tfidf.pkl", "rb"))
+nlp = spacy.load("en_core_web_sm")
 
-def extract_keywords(text_input, top_n=10):
 
-    if not text_input or not text_input.strip():
-        return []
+def extract_keywords(reviews, top_n=10):
 
-    text_input = text_input.lower().strip()
+    phrase_counter = Counter()
 
-    tfidf_matrix = vectorizer.transform([text_input])
+    for review in reviews:
 
-    feature_names = vectorizer.get_feature_names_out()
-    scores = tfidf_matrix.toarray()[0]
+        doc = nlp(review)
 
-    indices = np.where(scores > 0)[0]
+        for chunk in doc.noun_chunks:
 
-    ranked = sorted(indices, key=lambda i: scores[i], reverse=True)
+            phrase = chunk.text.lower().strip()
 
-    results = []
+            if len(phrase.split()) >= 2:
+                phrase_counter[phrase] += 1
 
-    for i in ranked:
-        phrase = feature_names[i]
-
-        # only bigrams/trigrams
-        if len(phrase.split()) < 2:
-            continue
-
-        # real occurrence count in text
-        count = text_input.count(phrase)
-
-        # skip if somehow not present
-        if count == 0:
-            continue
-
-        results.append((phrase, count))
-
-        if len(results) >= top_n:
-            break
-
-    return results
+    return phrase_counter.most_common(top_n)
