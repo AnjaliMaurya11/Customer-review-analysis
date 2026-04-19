@@ -32,7 +32,12 @@ def convert_rating(r):
 df['Sentiment'] = df['Rating'].apply(convert_rating)
 
 # =========================
-# 🔹 CUSTOM STOPWORDS (FIXED ✅)
+# 🔥 REMOVE NEUTRAL (IMPORTANT)
+# =========================
+df = df[df['Sentiment'] != 'Neutral']
+
+# =========================
+# 🔹 CUSTOM STOPWORDS
 # =========================
 custom_stopwords = list(text.ENGLISH_STOP_WORDS - {'not', 'no', 'nor'})
 
@@ -42,7 +47,7 @@ custom_stopwords = list(text.ENGLISH_STOP_WORDS - {'not', 'no', 'nor'})
 keyword_vectorizer = TfidfVectorizer(
     stop_words=custom_stopwords,
     max_features=5000,
-    ngram_range=(1, 2)   # supports phrases like "not good"
+    ngram_range=(1, 2)
 )
 
 keyword_vectorizer.fit(df['Review Text'])
@@ -51,7 +56,7 @@ keyword_vectorizer.fit(df['Review Text'])
 pickle.dump(keyword_vectorizer, open("app/tfidf.pkl", "wb"))
 
 # =========================
-# 🔥 2. SENTIMENT MODEL
+# 🔥 2. SENTIMENT MODEL (BINARY)
 # =========================
 sentiment_vectorizer = TfidfVectorizer(
     stop_words=custom_stopwords,
@@ -60,29 +65,23 @@ sentiment_vectorizer = TfidfVectorizer(
 
 # Convert text → features
 X = sentiment_vectorizer.fit_transform(df['Review Text'])
-y = df['Sentiment']
+y = df['Sentiment']   # Only Positive & Negative now
 
 # 🔹 Train-Test Split
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# 🔹 Train model
-model = LogisticRegression(
-    max_iter=200,
-    class_weight={
-        "Positive": 1,
-        "Negative": 1,
-        "Neutral": 2
-    }
-)
+# 🔹 Train model (NO Neutral)
+model = LogisticRegression(max_iter=200)
+
 model.fit(X_train, y_train)
 
 # 🔹 Evaluate
 accuracy = model.score(X_test, y_test)
 print("🎯 Model Accuracy:", round(accuracy * 100, 2), "%")
 
-# 🔹 Retrain on full data (IMPORTANT)
+# 🔹 Retrain on full data
 model.fit(X, y)
 
 # Save sentiment model

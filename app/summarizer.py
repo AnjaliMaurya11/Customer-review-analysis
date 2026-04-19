@@ -1,60 +1,81 @@
-#change
-from sklearn.feature_extraction.text import TfidfVectorizer
-import numpy as np
+import os
 
-def generate_summary(reviews, top_features=6):
+def generate_summary(reviews, sentiment_result, keywords):
+    """
+    reviews: list of review texts
+    sentiment_result: dict from analyze_sentiment()
+    keywords: list of tuples from extract_keywords()
+              e.g. [("great fit", 10), ("poor quality", 5)]
+    """
 
     if not reviews:
         return "No reviews available."
 
-    reviews = [str(r) for r in reviews if str(r).strip() != ""]
+    summary_parts = []
 
-    # Extract important keywords
-    vectorizer = TfidfVectorizer(stop_words="english")
-    X = vectorizer.fit_transform(reviews)
+    # =========================
+    # 🔹 SENTIMENT INSIGHT
+    # =========================
+    pos = sentiment_result.get("Positive %", 0)
+    neg = sentiment_result.get("Negative %", 0)
+    neu = sentiment_result.get("Neutral %", 0)
 
-    feature_names = vectorizer.get_feature_names_out()
-    scores = np.asarray(X.sum(axis=0)).flatten()
-
-    ranked = scores.argsort()[::-1]
-
-    keywords = [feature_names[i] for i in ranked[:top_features]]
-
-    # Domain-aware clothing insights
-    positive_features = []
-    negative_features = []
-
-    for word in keywords:
-
-        if word in ["fit", "comfortable", "quality", "fabric",
-                    "design", "style", "elegant", "soft",
-                    "beautiful", "versatile"]:
-            positive_features.append(word)
-
-        elif word in ["size", "sizing", "large", "small",
-                      "color", "tight", "loose", "length"]:
-            negative_features.append(word)
-
-    summary = ""
-
-    if positive_features:
-        summary += (
-            "Customers generally appreciated the "
-            + ", ".join(positive_features[:3])
-            + ". "
+    if pos > 60:
+        summary_parts.append(
+            "Overall customer sentiment is strongly positive."
+        )
+    elif neg > 40:
+        summary_parts.append(
+            "Customer sentiment shows significant dissatisfaction."
+        )
+    else:
+        summary_parts.append(
+            "Customer feedback reflects a mix of positive and negative experiences."
         )
 
-    if negative_features:
-        summary += (
-            "Some concerns were mentioned regarding "
-            + ", ".join(negative_features[:3])
+    # =========================
+    # 🔹 KEYWORD INSIGHT
+    # =========================
+    positive_words = []
+    negative_words = []
+
+    negative_indicators = [
+        "not", "poor", "bad", "small", "large",
+        "tight", "loose", "issue", "problem", "short"
+    ]
+
+    for phrase, count in keywords:
+
+        # classify based on negative words
+        if any(neg_word in phrase for neg_word in negative_indicators):
+            negative_words.append(phrase)
+        else:
+            positive_words.append(phrase)
+
+    # =========================
+    # 🔹 BUILD SUMMARY
+    # =========================
+
+    if positive_words:
+        summary_parts.append(
+            "Customers frequently appreciated aspects such as "
+            + ", ".join(positive_words[:3])
             + "."
         )
 
-    if summary == "":
-        summary = (
-            "Customer feedback highlights mixed opinions "
-            "with both positive experiences and some concerns."
+    if negative_words:
+        summary_parts.append(
+            "However, some concerns were raised regarding "
+            + ", ".join(negative_words[:3])
+            + "."
         )
 
-    return summary
+    # =========================
+    # 🔹 FALLBACK
+    # =========================
+    if len(summary_parts) == 1:
+        summary_parts.append(
+            "Key themes were identified from customer reviews."
+        )
+
+    return " ".join(summary_parts)

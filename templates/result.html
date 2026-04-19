@@ -77,7 +77,46 @@
           <span class="highlight">Negative:</span> {{
           sentiment_details['Negative %'] }}%
         </p>
-      </div>
+
+        <p>
+          <span class="highlight">Neutral:</span> {{ sentiment_details['Neutral %'] }}%
+        </p>
+
+        <h3>Sentiment Distribution</h3>
+        <canvas id="sentimentChart"></canvas>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        const sentimentData = {labels: ["Positive", "Negative","Neutral"],datasets: [{data: [{{ sentiment_details["Positive %"] }},{{ sentiment_details["Negative %"] }},{{ sentiment_details["Neutral %"] }}]}]};
+        new Chart(document.getElementById("sentimentChart"), {
+          type: "pie",
+          data: sentimentData
+          });
+          </script>
+          
+          <h3>Rating Distribution</h3>
+          <canvas id="ratingChart"></canvas>
+          <script>
+          const ratings = {{ ratings | tojson if ratings else [] }};
+          if (ratings.length > 0) {
+            const count = [0, 0, 0, 0, 0];
+            ratings.forEach(r => {
+              if (r >= 1 && r <= 5) {
+                count[r - 1]++;
+              }
+            });
+            new Chart(document.getElementById("ratingChart"), {
+              type: "bar",
+              data: {
+                labels: ["1⭐", "2⭐", "3⭐", "4⭐", "5⭐"],
+                datasets: [{
+                  label: "Number of Reviews",
+                  data: count
+                }]
+              }
+            });
+            }
+            </script>
+            </div>
 
       <!-- Keywords Section -->
       <div class="card">
@@ -95,6 +134,24 @@
         {% else %}
         <p>No keywords found</p>
         {% endif %}
+
+        <h3>Keyword Frequency Chart</h3>
+        <canvas id="keywordChart"></canvas>
+        <script>
+        const keywordLabels = {{ keywords | map(attribute=0) | list | tojson }};
+        const keywordCounts = {{ keywords | map(attribute=1) | list | tojson }};
+        new Chart(document.getElementById("keywordChart"), {
+          type: "bar",
+          data: {
+            labels: keywordLabels,
+            datasets: [{
+              label: "Frequency",
+              data: keywordCounts
+            }]
+          }
+          });
+          </script>
+
       </div>
 
       <!-- Summary Section -->

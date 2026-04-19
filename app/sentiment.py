@@ -20,29 +20,39 @@ def clean_text(text):
 # 🔹 RATING → SENTIMENT
 # =========================
 def rating_to_sentiment(rating):
-       if rating >= 4:
+    if rating >= 4:
         return "Positive"
-       elif rating <= 2:
+    elif rating <= 2:
         return "Negative"
-       else:
+    else:
         return "Neutral"
 
 # =========================
-# 🔹 ML PREDICTION
+# 🔥 ML PREDICTION (UPDATED)
 # =========================
-def predict_single(review):
+def predict_single(review, threshold=0.6):
     review = clean_text(review)
     vec = vectorizer.transform([review])
-    return model.predict(vec)[0]
+
+    # 🔥 Use probabilities instead of direct prediction
+    proba = model.predict_proba(vec)[0]
+
+    max_prob = max(proba)
+
+    # 👉 Neutral if confidence is low
+    if max_prob < threshold:
+        return "Neutral"
+    else:
+        return model.classes_[proba.argmax()]
 
 # =========================
-# 🔥 MAIN FUNCTION (ONLY DISTRIBUTION)
+# 🔥 MAIN FUNCTION
 # =========================
 def analyze_sentiment(reviews, ratings=None):
     """
-    reviews: list of cleaned reviews
+    reviews: list of reviews
     ratings: optional list of ratings
-    returns: sentiment percentage distribution only
+    returns: sentiment percentage distribution
     """
 
     sentiments = []

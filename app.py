@@ -6,6 +6,7 @@ from app.preprocessing import preprocess_csv, preprocess_manual
 from app.sentiment import analyze_sentiment
 from app.summarizer import generate_summary
 from app.keywordExtract import extract_keywords
+from app.summarizer import generate_summary
 
 app = Flask(__name__)
 
@@ -17,7 +18,7 @@ def home():
 # 🔹 Prediction Route
 @app.route('/predict', methods=['POST'])
 def result():
-
+    wordcloud_file = None
     sentiment_details = None
     keywords = None
     summary = None
@@ -59,6 +60,9 @@ def result():
     
     if not cleaned_reviews:
         return "No reviews provided!"
+    
+    if not original_reviews:
+        original_reviews = cleaned_reviews
 
    
     sentiment_details = analyze_sentiment(cleaned_reviews, ratings)
@@ -67,7 +71,7 @@ def result():
     keywords = extract_keywords(original_reviews)
 
     # 🔹 SUMMARY → list (correct for her function)
-    summary = generate_summary(original_reviews)
+    summary = generate_summary(original_reviews, sentiment_details, keywords)
 
     print("KEYWORDS:", keywords)
     print("SUMMARY:", summary)
@@ -77,8 +81,9 @@ def result():
         'result.html',
         sentiment_details=sentiment_details,
         keywords=keywords,
-        summary=summary
-    )
+        summary=summary,
+        ratings=ratings
+        )
 
 # 🔹 Run App
 if __name__ == "__main__":
