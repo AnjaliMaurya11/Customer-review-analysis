@@ -203,3 +203,10 @@ li {
   font-size: 18px;
   margin-bottom: 6px;
 }
+
+/* ONLY RESULT PAGE SECTION HEADINGS + SUMMARY LEFT ALIGN */
+
+.result-page .summary-card h5,
+.result-page .summary-card p {
+  text-align: left;
+}
